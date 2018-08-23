@@ -1,0 +1,63 @@
+.clock {
+    text-align: center;
+    position: relative;
+    border-radius: 20%;
+    margin: 0 auto;
+    transform: rotateZ(-90deg);
+}
+
+.clock>div {
+    display: inline-block;
+    position: absolute;
+    transition: all 200ms;
+    transform-origin: left;
+    text-align: right;
+}
+
+.clock>div:last-child {
+    text-align: center;
+    transform: rotate(90deg);
+    transform-origin: center center 0px;
+}
+
+.clock>div div {
+    display: inline-block;
+}
+
+.clock>div p {
+    margin: 0;
+    display: inline;
+}
+
+.clock .pointer {
+    width: 100px;
+    border: 1px solid;
+    height: 0;
+}
+
+.hourMove {
+    animation: hourPointer 43200s linear infinite;
+    -webkit-animation: hourPointer 43200ss linear infinite;
+}
+
+@keyframes hourPointer {}
+
+@-webkit-keyframes hourPointer {}
+
+.minuteMove {
+    animation: minutePointer 3600s linear infinite;
+    -webkit-animation: minutePointer 3600s linear infinite;
+}
+
+@keyframes minutePointer {}
+
+@-webkit-keyframes minutePointer {}
+
+.secMove {
+    animation: secPointer 60s linear infinite;
+    -webkit-animation: secPointer 60s linear infinite;
+}
+
+@keyframes secPointer {}
+
+@-webkit-keyframes secPointer {}
