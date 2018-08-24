@@ -118,13 +118,13 @@ class Clock {
         let minuteAnimate = getRule('minutePointer');
         minuteAnimate.forEach(function(elmt) {
             elmt.styleSheet.deleteRule(elmt.index);
-            elmt.styleSheet.insertRule("@keyframes minutePointer{0%{transform: rotate(" + nowMin * r + "deg);} 100%{transform: rotate(" + (nowMin * r + 360) + "deg);}");
+            elmt.styleSheet.insertRule("@keyframes minutePointer{0%{transform: rotate(" + nowMin * 60 + "deg);} 100%{transform: rotate(" + (nowMin * 60 + 360) + "deg);}");
         });
 
         let secAnimate = getRule('secPointer');
         secAnimate.forEach(function(elmt) {
             elmt.styleSheet.deleteRule(elmt.index);
-            elmt.styleSheet.insertRule("@keyframes secPointer{0%{transform: rotate(" + nowSec * r + "deg);} 100%{transform: rotate(" + ((nowSec * r) + 360) + "deg);}");
+            elmt.styleSheet.insertRule("@keyframes secPointer{0%{transform: rotate(" + nowSec * 60 + "deg);} 100%{transform: rotate(" + ((nowSec * 60) + 360) + "deg);}");
         });
         switch (this.style) {
             case "day":
