@@ -47,6 +47,9 @@
         <button id="night">night</button>
         <button id="free">free</button>
         <button id="day">day</button>
+        <br>
+        <input placeholder="00:00:00"  id="timetoset"/>
+        <button id="settime">set time</button>
     </div>
 
 </body>
@@ -82,6 +85,12 @@
         clock2.freeStyle();
         clock3.freeStyle();
     }, false);
+
+    document.getElementById('settime').addEventListener('click',function(){
+        clock.setClockTime(document.getElementById('timetoset').value);
+        clock2.setClockTime(document.getElementById('timetoset').value);
+        clock3.setClockTime(document.getElementById('timetoset').value);
+    });
 </script>
 
 </html>

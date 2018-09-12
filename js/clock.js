@@ -1,3 +1,14 @@
+/**
+ * 
+ * Clock 
+ * Description: a time clock like the iPhone using html, javascript and css3 
+ * Auther: Liyuan Dong
+ * Version: 0.1
+ * Github: https://github.com/happydongzh
+ *
+ * Bugs:
+ *
+ **/
 class Clock {
     constructor(clockDivContainer, { size = 400, style = "free" }) {
         this.container = clockDivContainer;
@@ -6,11 +17,13 @@ class Clock {
         this.initDom();
     }
 
+    /**
+     * init render doms
+     */
     initDom() {
         this.container.classList.add('clock');
         this.container.style.width = this.size + 'px';
         this.container.style.height = this.size + 'px';
-
         let cover = document.createElement('DIV');
         cover.style.width = this.size * .8 + 'px';
         cover.style.height = this.size * .8 + 'px';
@@ -18,7 +31,7 @@ class Clock {
         cover.style.left = this.size * .2 / 2 + 'px';
         cover.style.borderRadius = '50%';
         this.container.append(cover);
-        
+
         let r = 30;
         for (let i = 1; i < 13; i++) {
             let t = document.createElement('DIV');
@@ -62,33 +75,112 @@ class Clock {
         hour.classList.add('pointer');
         minute.classList.add('pointer');
         sec.classList.add('pointer');
+        ampm.classList.add('ampm');
+
+        hour.classList.add('hourMove');
+        minute.classList.add('minuteMove');
+        sec.classList.add('secMove');
 
         ampm.style.width = this.size / 2 * .5 + 'px';
         ampm.style.height = this.size / 2 * .5 + 'px';
-
         ampm.style.top = (this.size - (this.size / 2 * .5)) / 2 + 'px';
         ampm.style.left = ampm.style.top;
-        // ampm.style.backgroundColor='green';
-        // ampm.style.textAlign = 'center';
-        // ampm.style.transform = 'rotate(90deg)';
-        // ampm.style.transformOrigin= 'center';
 
         this.container.append(hour);
         this.container.append(minute);
         this.container.append(sec);
         this.container.append(ampm);
 
-        let [$now, timePart] = (new Date()).toLocaleTimeString().split(" "), [nowHour, nowMin, nowSec] = $now.split(":");
+        switch (this.style) {
+            case "day":
+                this.dayTimeStyle();
+                break;
+            case "night":
+                this.nightTimeStyle();
+                break;
+            default:
+                this.freeStyle();
+                break;
+        }
+        this.setClockTime();
+    };
 
-        ampm.innerHTML = timePart;
-        hour.style.transform = 'rotate(' + (parseInt(nowHour) + nowMin / 60) * (360 / 12) + 'deg)';
-        minute.style.transform = 'rotate(' + nowMin * r + 'deg)';
-        sec.style.transform = 'rotate(' + nowSec * r + 'deg)';
+    /**
+     * default style
+     */
+    freeStyle() {
+        this.container.style.backgroundColor = 'rgba(255,255,255, 1)';
+        this.container.style.border = "0px solid rgb(158, 158, 158)";
+        this.container.firstElementChild.style.backgroundColor = "rgba(158, 158, 158, 1)";
+        this.container.firstElementChild.style.border = "0px solid rgb(158, 158, 158)";
+        this.container.querySelectorAll('.tpart').forEach(e => {
+            e.style.backgroundColor = "rgba(255, 255, 255, 0)";
+            e.style.color = "black";
+        });
+        this.container.querySelector('.hourMove').style.borderColor = 'black';
+        this.container.querySelector('.minuteMove').style.borderColor = 'black';
+        this.container.lastChild.style.color = 'black';
+    };
 
-        hour.classList.add('hourMove');
-        minute.classList.add('minuteMove');
-        sec.classList.add('secMove');
+    /**
+     * day time style
+     */
+    dayTimeStyle() {
+        this.container.style.backgroundColor = 'rgba(255,255,255, 1)';
+        this.container.style.border = "1px solid rgb(158, 158, 158)";
+        this.container.firstElementChild.style.backgroundColor = "rgba(255, 255, 255, 1)";
+        this.container.firstElementChild.style.border = "1px solid rgb(158, 158, 158)";
+        this.container.querySelectorAll('.tpart').forEach(e => {
+            e.style.backgroundColor = "rgba(255, 255, 255, 0)";
+            e.style.color = "black";
+        });
+        this.container.querySelector('.hourMove').style.borderColor = 'black';
+        this.container.querySelector('.minuteMove').style.borderColor = 'black';
+        this.container.lastChild.style.color = 'black';
+    };
 
+    /**
+     * night time style
+     */
+    nightTimeStyle() {
+        this.container.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+        this.container.style.border = "0px solid rgb(158, 158, 158)";
+        this.container.firstElementChild.style.backgroundColor = "rgba(50, 50, 50, 1)";
+        this.container.firstElementChild.style.border = "0px solid rgb(158, 158, 158)";
+        this.container.querySelectorAll('.tpart').forEach(e => {
+            e.style.backgroundColor = "rgba(255, 255, 255, 0)";
+            e.style.color = "white";
+        });
+        this.container.querySelector('.hourMove').style.borderColor = 'white';
+        this.container.querySelector('.minuteMove').style.borderColor = 'white';
+        this.container.lastChild.style.color = 'white';
+    };
+
+    /**
+     * Set clock time
+     * @param {*} time in format 00:00:00
+     */
+    setClockTime(time = (new Date())) {
+        let r = 360 / 12,
+            t = time;
+        if (typeof time === 'string') {
+            t = new Date();
+            let [h, m, s] = time.split(':');
+            t.setHours(h);
+            t.setMinutes(m);
+            t.setSeconds(s);
+        };
+        let [timePart, nowHour, nowMin, nowSec] = [
+            (t.getHours() >= 12 ? 'PM' : 'AM'),
+            t.getHours() <= 12 ? t.getHours() : Math.abs(12 - t.getHours()),
+            t.getMinutes(),
+            t.getSeconds()
+        ];
+
+        /**
+         * get animation keyframe
+         * @param {*} name 
+         */
         function getRule(name) {
             var animations = [];
             var rule, cssRule;
@@ -108,77 +200,28 @@ class Clock {
             return animations;
         }
 
-
+        //update keyframe 
         let hourAnimate = getRule('hourPointer');
         hourAnimate.forEach(function(elmt) {
             elmt.styleSheet.deleteRule(elmt.index);
-            elmt.styleSheet.insertRule("@keyframes hourPointer{0%{transform: rotate(" + (parseInt(nowHour) + nowMin / 60) * (360 / 12) + "deg);} 100%{transform: rotate(" + ((parseInt(nowHour) + nowMin / 60) * (360 / 12) + 360) + "deg);}");
+            elmt.styleSheet.insertRule("@keyframes hourPointer{0%{transform: rotate(" + (parseInt(nowHour) + nowMin / 60) * r + "deg);} 100%{transform: rotate(" + ((parseInt(nowHour) + nowMin / 60) * r + 360) + "deg);}");
         });
 
+        //update keyframe 
         let minuteAnimate = getRule('minutePointer');
         minuteAnimate.forEach(function(elmt) {
             elmt.styleSheet.deleteRule(elmt.index);
-            elmt.styleSheet.insertRule("@keyframes minutePointer{0%{transform: rotate(" + nowMin * r + "deg);} 100%{transform: rotate(" + (nowMin * r + 360) + "deg);}");
+            elmt.styleSheet.insertRule("@keyframes minutePointer{0%{transform: rotate(" + nowMin * 6 + "deg);} 100%{transform: rotate(" + (nowMin * 6 + 360) + "deg);}");
         });
 
+        //update keyframe 
         let secAnimate = getRule('secPointer');
         secAnimate.forEach(function(elmt) {
             elmt.styleSheet.deleteRule(elmt.index);
-            elmt.styleSheet.insertRule("@keyframes secPointer{0%{transform: rotate(" + nowSec * r + "deg);} 100%{transform: rotate(" + ((nowSec * r) + 360) + "deg);}");
+            elmt.styleSheet.insertRule("@keyframes secPointer{0%{transform: rotate(" + nowSec * 6 + "deg);} 100%{transform: rotate(" + ((nowSec * 6) + 360) + "deg);}");
         });
-        switch (this.style) {
-            case "day":
-                this.dayTimeStyle();
-                break;
-            case "night":
-                this.nightTimeStyle();
-                break;
-            default:
-                this.freeStyle();
-                break;
-        }
-    };
 
-    freeStyle(){
-        this.container.style.backgroundColor='rgba(255,255,255, 1)';
-        this.container.style.border="0px solid rgb(158, 158, 158)";
-        this.container.firstElementChild.style.backgroundColor="rgba(158, 158, 158, 1)";
-        this.container.firstElementChild.style.border="0px solid rgb(158, 158, 158)";
-        this.container.querySelectorAll('.tpart').forEach(e => {
-            e.style.backgroundColor="rgba(255, 255, 255, 0)";
-            e.style.color="black";
-        });
-        this.container.querySelector('.hourMove').style.borderColor='black';
-        this.container.querySelector('.minuteMove').style.borderColor='black';
-        this.container.lastChild.style.color='black';
+        this.container.querySelector('.ampm').innerHTML = timePart;
     };
-
-    dayTimeStyle(){
-        this.container.style.backgroundColor='rgba(255,255,255, 1)';
-        this.container.style.border="1px solid rgb(158, 158, 158)";
-        this.container.firstElementChild.style.backgroundColor="rgba(255, 255, 255, 1)";
-        this.container.firstElementChild.style.border="1px solid rgb(158, 158, 158)";
-        this.container.querySelectorAll('.tpart').forEach(e => {
-            e.style.backgroundColor="rgba(255, 255, 255, 0)";
-            e.style.color="black";
-        });
-        this.container.querySelector('.hourMove').style.borderColor='black';
-        this.container.querySelector('.minuteMove').style.borderColor='black';
-        this.container.lastChild.style.color='black';
-    };
-
-    nightTimeStyle(){
-        this.container.style.backgroundColor='rgba(0, 0, 0, 1)';
-        this.container.style.border="0px solid rgb(158, 158, 158)";
-        this.container.firstElementChild.style.backgroundColor="rgba(50, 50, 50, 1)";
-        this.container.firstElementChild.style.border="0px solid rgb(158, 158, 158)";
-        this.container.querySelectorAll('.tpart').forEach(e => {
-            e.style.backgroundColor="rgba(255, 255, 255, 0)";
-            e.style.color="white";
-        });
-        this.container.querySelector('.hourMove').style.borderColor='white';
-        this.container.querySelector('.minuteMove').style.borderColor='white';
-        this.container.lastChild.style.color='white';
-    }
 
 }
